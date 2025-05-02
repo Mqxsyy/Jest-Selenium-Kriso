@@ -27,12 +27,12 @@ module.exports = class Homepage extends Page  {
     }
 
     async verifyLogo() {
-        const logo = await super.getElement(logoItem)
+        const logo = await super.findElement(logoItem)
         expect(logo).toBeDefined()
     }
 
     async openBookPage(number) {
-        const bookLinks = await super.getElements(offerBookLink)
+        const bookLinks = await super.findElements(offerBookLink)
         await super.click(bookLinks[number-1])
     }
 
