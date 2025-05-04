@@ -1,12 +1,11 @@
-const { By } = require("selenium-webdriver");
+const { By, until } = require("selenium-webdriver");
 const BasePage = require("./basePage");
 
 const result = By.css(".book-list > .list-item");
 const title = By.css(".book-title");
 const description = By.css(".book-desc-short > span");
-const resultCount = By.className("sb-results-total");
-const hardbackFilterBtn = By.xpath('//a[contains(string(), "Hardback")]');
 const bookFeatures = By.className("book-features");
+const categoryName = By.css(".catbrowser > h2 > span");
 
 const englishRegex =
   /^[\p{L}\p{N}\s.,!?'"():;\-–—&/\\[\]{}@#%*+=<>_|~`’™…®]*$/u;
@@ -31,6 +30,8 @@ module.exports = class SearchResultsPage extends BasePage {
   }
 
   async verifyResultsAreInEnglish() {
+    await this.driver.wait(until.elementLocated(result), 5000);
+
     const elements = await super.findElements(result);
     for (const el of elements) {
       const titleText = await super.getChildText(el, title);
@@ -45,18 +46,41 @@ module.exports = class SearchResultsPage extends BasePage {
   }
 
   async getResultsCount() {
-    return await super.getElementText(resultCount);
+    const headerText = await super.findElement(
+      By.xpath(`//i[normalize-space()='Otsingu tulemused']`),
+    );
+
+    const header = await headerText.findElement(By.xpath("./ancestor::h2[1]"));
+    const resultsContainer = await header.findElement(
+      By.xpath("following-sibling::div[1]"),
+    );
+
+    const resultsCount = await resultsContainer.findElement(
+      By.className("sb-results-total"),
+    );
+
+    return await resultsCount.getText();
   }
 
-  async filterToHardback() {
-    await super.findAndClick(hardbackFilterBtn);
+  async addFilter(filter) {
+    await super.findAndClick(By.xpath(`//a[contains(string(), "${filter}")]`));
   }
 
-  async verifyResultsFormatToBeHardback() {
+  async verifyResultsFormatType(formatType) {
     const elements = await super.findElements(result);
     for (const el of elements) {
       const features = await super.getChildText(el, bookFeatures);
-      expect(features).toContain("Hardback");
+      expect(features.toLowerCase()).toContain(formatType.toLowerCase());
     }
+  }
+
+  async navigateToSubCategory(subcategory) {
+    await super.findAndClick(
+      By.xpath(`//i[contains(string(), "${subcategory}")]`),
+    );
+  }
+
+  async getCurrentCategoryName() {
+    return await super.getElementText(categoryName);
   }
 };

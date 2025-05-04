@@ -14,7 +14,7 @@ describe("Search products by keywords", () => {
   beforeAll(async () => {
     driver = await new Builder()
       .forBrowser("firefox")
-      // .setFirefoxOptions(new firefox.Options().addArguments("--headless"))
+      .setFirefoxOptions(new firefox.Options().addArguments("--headless"))
       .build();
 
     await driver.manage().window().maximize();
@@ -49,6 +49,7 @@ describe("Search products by keywords", () => {
 
   // test("Test if results are sorted from lowest to highest price", async () => {});
 
+  // Fails around 1/3 of the time due to some *page refreshing?* problem I could not figure out
   test("Test if all results are in english", async () => {
     await searchBar.setLanguageToEnglish();
     resultsPage = await searchBar.search("");
@@ -57,7 +58,7 @@ describe("Search products by keywords", () => {
 
   test("Test if filtering to hardback reduces amount of results", async () => {
     const initialResultsCount = await resultsPage.getResultsCount();
-    await resultsPage.filterToHardback();
+    await resultsPage.addFilter("Hardback");
     const newResultsCount = await resultsPage.getResultsCount();
 
     expect(Number(initialResultsCount)).toBeGreaterThan(
@@ -66,6 +67,6 @@ describe("Search products by keywords", () => {
   });
 
   test("Test if filtered results match filter of Hardback", async () => {
-    await resultsPage.verifyResultsFormatToBeHardback();
+    await resultsPage.verifyResultsFormatType("Hardback");
   });
 });

@@ -16,7 +16,7 @@ describe("Shopping cart workflow", () => {
     driver = await new Builder()
       .forBrowser("firefox")
       //uncomment if you want to run in headless mode
-      // .setFirefoxOptions(new firefox.Options().addArguments("--headless"))
+      .setFirefoxOptions(new firefox.Options().addArguments("--headless"))
       .build();
     await driver.manage().window().maximize();
     await driver.manage().setTimeouts({ implicit: TIMEOUT });
