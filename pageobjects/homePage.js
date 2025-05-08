@@ -16,6 +16,9 @@ const cartBackBtn = By.className("cartbtn-event back");
 const cartForwardBtn = By.className("cartbtn-event forward");
 const categoryBtn = By.id("cat-big-btn");
 
+const section = (sectionName) => By.xpath(`//a[contains(string(), "${sectionName}")]`)
+const category = (categoryName) => By.xpath(`//a[contains(string(), "${categoryName}")]`)
+
 module.exports = class Homepage extends Page {
   async openUrl() {
     await super.openUrl(homePageUrl);
@@ -54,17 +57,12 @@ module.exports = class Homepage extends Page {
   }
 
   async verifySectionVisibility(sectionName) {
-    const el = await super.findElement(
-      By.xpath(`//a[contains(string(), "${sectionName}")]`),
-    );
-
+    const el = await super.findElement(section(sectionName));
     expect(el).not.toBeNull();
   }
 
-  async navigateToCategory(category) {
+  async navigateToCategory(categoryName) {
     await super.findAndClick(categoryBtn);
-    await super.findAndClick(
-      By.xpath(`//a[contains(string(), "${category}")]`),
-    );
+    await super.findAndClick(category(categoryName));
   }
 };

@@ -7,6 +7,9 @@ const description = By.css(".book-desc-short > span");
 const bookFeatures = By.className("book-features");
 const categoryName = By.css(".catbrowser > h2 > span");
 
+const filterBtn = (filterType) => By.xpath(`//a[contains(string(), "${filterType}")]`)
+const subcategory = (subcategoryName) => By.xpath(`//i[contains(string(), "${subcategoryName}")]`)
+
 const englishRegex =
   /^[\p{L}\p{N}\s.,!?'"():;\-–—&/\\[\]{}@#%*+=<>_|~`’™…®]*$/u;
 
@@ -62,8 +65,8 @@ module.exports = class SearchResultsPage extends BasePage {
     return await resultsCount.getText();
   }
 
-  async addFilter(filter) {
-    await super.findAndClick(By.xpath(`//a[contains(string(), "${filter}")]`));
+  async addFilter(filterType) {
+    await super.findAndClick(filterBtn(filterType));
   }
 
   async verifyResultsFormatType(formatType) {
@@ -74,10 +77,8 @@ module.exports = class SearchResultsPage extends BasePage {
     }
   }
 
-  async navigateToSubCategory(subcategory) {
-    await super.findAndClick(
-      By.xpath(`//i[contains(string(), "${subcategory}")]`),
-    );
+  async navigateToSubCategory(subcategoryName) {
+    await super.findAndClick(subcategory(subcategoryName));
   }
 
   async getCurrentCategoryName() {
